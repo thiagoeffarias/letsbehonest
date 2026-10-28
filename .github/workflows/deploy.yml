@@ -41,7 +41,7 @@ jobs:
         run: |
           cp web/dist/index.html web/dist/404.html
           touch web/dist/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: web/dist
 
