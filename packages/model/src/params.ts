@@ -46,6 +46,9 @@ export const DEFAULT_PARAMS: ModelParams = {
   tolerance: 0.1,
 };
 
+/** Intervalo de sensibilidade de σ publicado ao lado do resultado (estimativas institucionais: FMI ≈ 20%, CE ≈ 25–35%). */
+export const SIGMA_RANGE: [number, number] = [0.2, 0.35];
+
 /** Área de referência por tipologia (m²), hipótese do projeto. */
 export const REFERENCE_AREA: Record<Typology, number> = { T0: 35, T1: 50, T2: 80, T3: 105, 'T4+': 135 };
 

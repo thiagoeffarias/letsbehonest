@@ -83,6 +83,8 @@ S2 = (L / LTV) / A_tipo
 B_z = min( m_z , 0,5·S1 + 0,5·S2 )      faixa: 0,3/0,7 e 0,7/0,3 (também limitada a m_z)
 ```
 
+**Como ler os números.** A *mediana de mercado* (€/m², INE) é o que se pede e paga hoje. O *preço de referência* (€/m²) é a média de S1 (mediana ÷ (1+σ)) e S2 (o que o rendimento local paga). O *excesso* = mediana ÷ referência − 1 no mapa, e preço do anúncio ÷ referência do imóvel − 1 na calculadora: nunca se compara diretamente com o salário, que só entra em S2. O σ não mede especulação: é uma correção estatística nacional (hipótese do projeto, intervalo de sensibilidade 0,20 a 0,35, mostrado ao lado de cada resultado).
+
 ### 5.2 Coeficientes do imóvel (relativos a "bom estado, 9–15 anos")
 
 `PR = B_z × A × C_c × C_v × C_luz × C_q × s(A)`

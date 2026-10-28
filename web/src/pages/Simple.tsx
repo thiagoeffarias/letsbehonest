@@ -30,13 +30,33 @@ export function MethodologyPage({ route, compact }: { route: Route; compact: boo
     { label: 'meth.hyp.size', value: `(A/Aref)^${SIZE_EXPONENT} [${SIZE_BOUNDS.join('; ')}]` },
     { label: 'meth.hyp.quality', value: 'meth.hyp.qualityV' },
   ];
+  const sigmaRows: TableRow[] = [
+    { label: 'meth.sigma.ec1', value: { k: 'meth.approx', p: { v: pct(35) } } },
+    { label: 'meth.sigma.ec2', value: { k: 'meth.approx', p: { v: pct(25) } } },
+    { label: 'meth.sigma.imf', value: { k: 'meth.approx', p: { v: pct(20) } } },
+    { label: 'meth.sigma.bdp', value: pct(33) },
+  ];
+  const sigmaBlock = (
+    <>
+      <Text>meth.sigma.what</Text>
+      <TypologyTable title="meth.sigma.table" rows={sigmaRows} />
+      <Badge tone="support">common.hypothesis</Badge>
+      <Text>meth.sigma.chosen</Text>
+      <Text variant="small" tone="secondary">meth.sigma.limits</Text>
+    </>
+  );
+  const readBlock = (
+    <ul>
+      {['market', 'reference', 'excess'].map((k) => <li key={k}><Text as="span">{`meth.read.${k}`}</Text></li>)}
+    </ul>
+  );
   const ex: TableRow[] = ['fair', 'above', 'inflated', 'disp'].map((k) => ({ label: `meth.ex.${k}`, value: `meth.ex.${k}V` }));
   const nav: NavItem[] = [];
   void nav;
   const sources = ['ine', 'bdp', 'eu', 'at', 'law', 'rent', 'dgt'].map((s) => `meth.src.${s}`);
   const limits = [1, 2, 3, 4].map((n) => `meth.lim.${n}`);
   const tabs = [
-    { id: 'calculo', label: 'common.howWeCalculate' }, { id: 'coef', label: 'meth.coef.short' },
+    { id: 'ler', label: 'meth.read.short' }, { id: 'calculo', label: 'common.howWeCalculate' }, { id: 'sigma', label: 'meth.sigma.short' }, { id: 'coef', label: 'meth.coef.short' },
     { id: 'excesso', label: 'meth.ex.title' }, { id: 'fontes', label: 'meth.src.short' }, { id: 'limites', label: 'meth.lim.title' },
   ].map((t) => ({ ...t, href: `#${t.id}` }));
   const list = (keys: string[]) => <ul>{keys.map((k) => <li key={k}><Text as="span">{k}</Text></li>)}</ul>;
@@ -50,10 +70,12 @@ export function MethodologyPage({ route, compact }: { route: Route; compact: boo
         </div>
         <SectionTabs items={tabs} />
         <div className="pr-stack">
-          <MethodologySection id="calculo" title="common.howWeCalculate" collapsible open>
+          <MethodologySection id="ler" title="meth.read.short" collapsible open>{readBlock}</MethodologySection>
+          <MethodologySection id="calculo" title="common.howWeCalculate" collapsible>
             <BreakdownList items={how} />
             <TypologyTable title="meth.def.table" rows={defs} />
           </MethodologySection>
+          <MethodologySection id="sigma" title="meth.sigma.short" collapsible>{sigmaBlock}</MethodologySection>
           <MethodologySection id="coef" title="meth.coef.short" collapsible>
             <TypologyTable title="meth.coef.consShort" rows={cons} />
             <Text variant="small" tone="secondary">meth.coef.ageShort</Text>
@@ -79,7 +101,9 @@ export function MethodologyPage({ route, compact }: { route: Route; compact: boo
         <Text>meth.layers.effort</Text>
         <Text>meth.layers.ref</Text>
       </MethodologySection>
+      <MethodologySection id="read" title="meth.read.title">{readBlock}</MethodologySection>
       <MethodologySection id="how" title="meth.how.title"><BreakdownList items={how} /></MethodologySection>
+      <MethodologySection id="sigma" title="meth.sigma.title">{sigmaBlock}</MethodologySection>
       <MethodologySection id="def" title="meth.def.title"><TypologyTable title="meth.def.table" rows={defs} /></MethodologySection>
       <MethodologySection id="coef" title="meth.coef.title">
         <TypologyTable title="meth.coef.cons" rows={cons} />
