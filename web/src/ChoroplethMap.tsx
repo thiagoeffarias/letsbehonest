@@ -29,6 +29,8 @@ export function ChoroplethMap(props: ChoroplethMapProps) {
   const ready = useRef(false);
   const onSelect = useRef(props.onSelect);
   onSelect.current = props.onSelect;
+  // estado mais recente para o `sync`, que vive no efeito de montagem
+  const latest = useRef({ painted: null as any, metric, selected });
 
   // atribui o tom de cada polígono para a métrica e tipologia atuais
   const painted = useMemo(() => {
@@ -47,6 +49,8 @@ export function ChoroplethMap(props: ChoroplethMapProps) {
     };
   }, [data, metric, typology]);
 
+  latest.current = { painted, metric, selected };
+
   useEffect(() => {
     props.onScale?.(painted.low != null && painted.high != null ? { low: painted.low, high: painted.high } : null);
   }, [painted]);
@@ -64,11 +68,11 @@ export function ChoroplethMap(props: ChoroplethMapProps) {
     m.on('load', () => {
       const noData = css('--color-data-no-data');
       const fill = (metricKey: Metric) => ['match', ['get', 'tier'], 1, ramp(metricKey)[0], 2, ramp(metricKey)[1], 3, ramp(metricKey)[2], 4, ramp(metricKey)[3], 5, ramp(metricKey)[4], noData];
-      m.addSource('concelhos', { type: 'geojson', data: painted.concelhos as any, promoteId: 'code' });
-      m.addSource('freguesias', { type: 'geojson', data: painted.freguesias as any, promoteId: 'code' });
-      m.addLayer({ id: 'concelhos-fill', type: 'fill', source: 'concelhos', paint: { 'fill-color': fill(metric) as any } });
+      m.addSource('concelhos', { type: 'geojson', data: latest.current.painted.concelhos as any, promoteId: 'code' });
+      m.addSource('freguesias', { type: 'geojson', data: latest.current.painted.freguesias as any, promoteId: 'code' });
+      m.addLayer({ id: 'concelhos-fill', type: 'fill', source: 'concelhos', paint: { 'fill-color': fill(latest.current.metric) as any } });
       m.addLayer({ id: 'concelhos-line', type: 'line', source: 'concelhos', paint: { 'line-color': css('--color-surface-page'), 'line-width': 0.6 } });
-      m.addLayer({ id: 'freguesias-fill', type: 'fill', source: 'freguesias', minzoom: 8.5, filter: ['==', ['get', 'hasData'], true], paint: { 'fill-color': fill(metric) as any } });
+      m.addLayer({ id: 'freguesias-fill', type: 'fill', source: 'freguesias', minzoom: 8.5, filter: ['==', ['get', 'hasData'], true], paint: { 'fill-color': fill(latest.current.metric) as any } });
       m.addLayer({ id: 'freguesias-line', type: 'line', source: 'freguesias', minzoom: 8.5, paint: { 'line-color': css('--color-surface-page'), 'line-width': 0.5 } });
       for (const s of ['concelhos', 'freguesias']) {
         m.addLayer({
@@ -89,10 +93,12 @@ export function ChoroplethMap(props: ChoroplethMapProps) {
     const sync = () => {
       const mm = map.current;
       if (!mm || !ready.current) return;
-      (mm.getSource('concelhos') as maplibregl.GeoJSONSource).setData(painted.concelhos as any);
-      (mm.getSource('freguesias') as maplibregl.GeoJSONSource).setData(painted.freguesias as any);
-      for (const l of ['concelhos-fill', 'freguesias-fill']) mm.setPaintProperty(l, 'fill-color', ['match', ['get', 'tier'], 1, ramp(metric)[0], 2, ramp(metric)[1], 3, ramp(metric)[2], 4, ramp(metric)[3], 5, ramp(metric)[4], css('--color-data-no-data')]);
-      for (const l of ['concelhos-selected', 'freguesias-selected']) mm.setFilter(l, ['==', ['get', 'code'], selected ?? '']);
+      const { painted: pt, metric: mt, selected: sel } = latest.current;
+      (mm.getSource('concelhos') as maplibregl.GeoJSONSource).setData(pt.concelhos as any);
+      (mm.getSource('freguesias') as maplibregl.GeoJSONSource).setData(pt.freguesias as any);
+      const colors = ramp(mt);
+      for (const l of ['concelhos-fill', 'freguesias-fill']) mm.setPaintProperty(l, 'fill-color', ['match', ['get', 'tier'], 1, colors[0], 2, colors[1], 3, colors[2], 4, colors[3], 5, colors[4], css('--color-data-no-data')]);
+      for (const l of ['concelhos-selected', 'freguesias-selected']) mm.setFilter(l, ['==', ['get', 'code'], sel ?? '']);
     };
     (m as any)._sync = sync;
     return () => { ready.current = false; m.remove(); map.current = null; };
