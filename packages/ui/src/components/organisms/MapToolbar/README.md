@@ -1,0 +1,1 @@
+Barra de controlos do mapa: `SearchField`, `TypologyFilter` e (só em desktop) `MetricTabs` (preço por m², variação anual, excesso face à referência). Props: `compact`, `typology`, `metric`, `searchId`, `query` e `suggestions` (mostram a `SuggestionList` sob a pesquisa), `active`.

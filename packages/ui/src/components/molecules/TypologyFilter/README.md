@@ -1,0 +1,1 @@
+Grupo de `Chip` para escolher a tipologia (`T0`, `T1`, `T2`, `T3`, `T4+`). Props: `value`, `onChange(valor)`, `size` (`sm` desktop, `md` mobile), `scroll` (faz scroll horizontal em mobile), `options`, `label` (nome acessível do grupo).

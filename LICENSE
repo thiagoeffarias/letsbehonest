@@ -1,0 +1,39 @@
+Preço Real — Licença de utilização restrita ("código visível, todos os direitos reservados")
+Restricted-use licence ("source-available, all rights reserved")
+
+Copyright (c) 2026 Thiago Ferreira Farias. Todos os direitos reservados. / All rights reserved.
+
+1. O QUE PODE FAZER / WHAT YOU MAY DO
+   Ver, ler e estudar o código-fonte, a documentação e os dados deste repositório; usar o site
+   publicado; citar excertos curtos com atribuição; e, dentro do GitHub, fazer fork e abrir
+   pull requests, nos termos dos Termos de Serviço do GitHub.
+   You may view, read and study the source code, documentation and data in this repository; use the
+   published website; quote short excerpts with attribution; and, within GitHub, fork and open pull
+   requests, as allowed by the GitHub Terms of Service.
+
+2. O QUE NÃO PODE FAZER SEM AUTORIZAÇÃO ESCRITA / WHAT REQUIRES WRITTEN PERMISSION
+   a) copiar, reproduzir, publicar, alojar ou distribuir este software, o seu design (tokens,
+      componentes, ecrãs, textos, catálogos de idioma), a sua documentação ou o seu modelo de
+      cálculo, no todo ou em parte, fora do GitHub;
+   b) criar obras derivadas, serviços concorrentes ou semelhantes, ou produtos que reutilizem
+      estes materiais, com ou sem fins lucrativos;
+   c) usar o nome "Preço Real", o logótipo ou a identidade visual para identificar outro projeto;
+   d) usar os materiais para treinar ou afinar modelos de aprendizagem automática.
+   Pedidos de autorização: abra uma issue neste repositório.
+
+3. DADOS DE TERCEIROS / THIRD-PARTY DATA
+   Os dados do INE, da DGT (CAOP) e de outras fontes oficiais mantêm os seus próprios termos de
+   utilização e atribuição, e esta licença não os altera. Os valores calculados (referências,
+   excessos, veredictos) são estimativas por acessibilidade, não constituem aconselhamento
+   financeiro, jurídico nem avaliação oficial.
+
+4. SEM GARANTIA / NO WARRANTY
+   O software e os dados são fornecidos "tal como estão", sem garantia de qualquer tipo. O autor
+   não é responsável por decisões tomadas com base neles.
+
+5. IDEIAS / IDEAS
+   O direito de autor protege a expressão (código, texto, design), não as ideias nem os métodos
+   em abstrato. Esta licença não restringe a liberdade de qualquer pessoa desenvolver, de forma
+   independente e sem usar estes materiais, um serviço com objetivos semelhantes.
+
+Qualquer licença aberta futura (para partes do projeto) será indicada por escrito neste ficheiro.

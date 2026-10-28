@@ -1,0 +1,7 @@
+# Alterações ao modelo, aos dados e às regras do repositório exigem revisão do dono.
+*                       @thiagoeffarias
+/packages/model/        @thiagoeffarias
+/data-pipeline/         @thiagoeffarias
+/web/public/data/       @thiagoeffarias
+/.github/               @thiagoeffarias
+/LICENSE                @thiagoeffarias

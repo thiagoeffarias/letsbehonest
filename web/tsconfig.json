@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "lib": ["ES2022", "DOM", "DOM.Iterable"], "module": "ESNext", "moduleResolution": "Bundler",
+    "jsx": "react-jsx", "strict": true, "skipLibCheck": true, "noEmit": true, "isolatedModules": true,
+    "resolveJsonModule": true, "esModuleInterop": true, "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": { "@preco-real/ui": ["../packages/ui/src/index.ts"], "@preco-real/model": ["../packages/model/src/index.ts"] }
+  },
+  "include": ["src", "vite.config.ts"]
+}

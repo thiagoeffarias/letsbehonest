@@ -1,0 +1,13 @@
+{
+  "name": "preco-real",
+  "private": true,
+  "workspaces": ["packages/*", "data-pipeline", "web"],
+  "scripts": {
+    "model:test": "npm run test -w @preco-real/model",
+    "web:dev": "npm run dev -w @preco-real/web",
+    "web:build": "npm run build -w @preco-real/web",
+    "ui:build": "npm run build -w @preco-real/ui",
+    "ui:test": "npm run test -w @preco-real/ui",
+    "ui:typecheck": "npm run typecheck -w @preco-real/ui"
+  }
+}

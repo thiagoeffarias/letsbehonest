@@ -1,0 +1,1 @@
+Legenda do mapa. `metric`: `price`, `change`, `excess` (rampa âmbar). `compact`: uma só linha com as pontas e a escala, para mobile; sem título nem "Dados insuficientes". Props: `title`, `low`, `high`, `noData`, `compact`.
