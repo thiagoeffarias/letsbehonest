@@ -7,6 +7,7 @@ export * from './components/atoms/Text';
 export * from './components/atoms/Button';
 export * from './components/atoms/Chip';
 export * from './components/atoms/Badge';
+export * from './components/atoms/Brand';
 export * from './components/atoms/Label';
 export * from './components/atoms/TextInput';
 export * from './components/atoms/Select';

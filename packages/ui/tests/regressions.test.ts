@@ -3,7 +3,7 @@ import { act, createElement as h } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { Checkbox, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
+import { Checkbox, Footer, Header, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -62,4 +62,15 @@ describe('catálogo sem factos fixos', () => {
       expect(offenders).toEqual([]);
     });
   }
+});
+
+describe('nome do site', () => {
+  const html = (locale: 'pt_pt' | 'en') => renderToStaticMarkup(h(I18nProvider, { locale }, h(Header, {}), h(Footer, {})));
+  it('Header e Footer usam o nome traduzido e já não "Preço Real"', () => {
+    expect(html('pt_pt')).toContain('Vamos ser');
+    expect(html('pt_pt')).toContain('honestos');
+    expect(html('en')).toContain('Let&#x27;s be');
+    expect(html('en')).toContain('honest');
+    expect(html('pt_pt')).not.toContain('Preço');
+  });
 });

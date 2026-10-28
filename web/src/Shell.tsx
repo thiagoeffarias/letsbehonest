@@ -28,7 +28,7 @@ const PAGES = [
 function useDocumentMeta(route: Route, titleKey: string, t: (k: string) => string) {
   useEffect(() => {
     document.documentElement.lang = htmlLang(route.locale);
-    document.title = `${t(titleKey)} · Preço Real`;
+    document.title = `${t(titleKey)} · ${t('brand.name')}`;
     document.querySelector('meta[name="description"]')?.setAttribute('content', t('footer.mission'));
     document.querySelectorAll('link[data-alt]').forEach((n) => n.remove());
     for (const loc of ['pt_pt', 'en'] as Locale[]) {

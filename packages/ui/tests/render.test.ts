@@ -16,6 +16,7 @@ const cases: Record<string, any> = {
   Button: { children: 'common.compareAd', icon: 'search' },
   Chip: { children: 'common.edit', selected: true },
   Badge: { children: 'common.sampleData' },
+  Brand: {},
   Label: { children: 'calc.zone', hint: 'calc.area.hint' },
   TextInput: { placeholder: 'calc.zone.placeholder' },
   Select: { options: opts },

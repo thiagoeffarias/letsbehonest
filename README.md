@@ -1,4 +1,6 @@
-# Preço Real
+# Vamos ser honestos · Let's be honest
+
+> Nome de código interno: *Preço Real* (pacotes `@preco-real/*`).
 
 **Quanto custa, de facto, uma casa que o rendimento local consegue pagar?**
 Um serviço público e gratuito que põe lado a lado o que o mercado pede e o que as famílias da zona conseguem suportar, com a matemática à vista, para tornar visíveis os preços desproporcionados.
@@ -11,7 +13,7 @@ Um serviço público e gratuito que põe lado a lado o que o mercado pede e o qu
 
 Em Portugal, os preços das casas subiram mais de 16% em 2025 e continuam a subir, muito acima dos salários. As médias escondem o problema, e quem compra ou arrenda não tem um termo de comparação independente.
 
-O Preço Real faz duas perguntas simples a cada zona e a cada anúncio:
+O *Vamos ser honestos* faz duas perguntas simples a cada zona e a cada anúncio:
 
 1. **O que diz o mercado?** A mediana de venda do INE (factual).
 2. **O que consegue pagar quem vive ali?** Um **preço de referência por acessibilidade** (normativo), calculado a partir do rendimento mediano local, com o esforço máximo que o Banco de Portugal considera razoável.

@@ -2,6 +2,7 @@ import { h } from '../../../h';
 import type { NavItem } from '../../../types';
 import { cx } from '../../../utils';
 import { useI18n } from '../../../i18n';
+import { Brand } from '../../atoms/Brand';
 import { Button } from '../../atoms/Button';
 import { Text } from '../../atoms/Text';
 import { LanguageSwitcher } from '../LanguageSwitcher';
@@ -19,7 +20,7 @@ export function MobileMenu(props: MobileMenuProps) {
   var nav = props.nav || [];
   return h('div', { className: cx('pr-menu', props.className), role: 'dialog', 'aria-label': tr('menu.title') }, [
     h('div', { key: 'h', className: 'pr-menu__head' }, [
-      h('a', { key: 'b', className: 'pr-brand display-md', href: props.brandHref || '#' }, ['Preço ', h('span', { key: 'r', className: 'pr-brand__accent' }, 'Real')]),
+      h(Brand, { key: 'b', href: props.brandHref }),
       h(Button, { key: 'c', variant: 'ghost', icon: 'close', iconOnly: true, ariaLabel: 'common.closeMenu', href: props.closeHref || '#' })
     ]),
     h('nav', { key: 'n', className: 'pr-menu__nav', 'aria-label': tr('nav.main') }, nav.map(function (it) {

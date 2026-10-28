@@ -1,3 +1,4 @@
+import { Brand } from '../../atoms/Brand';
 import { h } from '../../../h';
 import { cx } from '../../../utils';
 import { useI18n } from '../../../i18n';
@@ -26,7 +27,7 @@ export function Footer(props: FooterProps) {
     h(Text, { key: 'a', variant: 'caption', tone: 'secondary', as: 'p' }, 'footer.legal'),
     h(Text, { key: 'b', variant: 'caption', tone: 'secondary', as: 'p' }, 'footer.version')
   ]);
-  var brand = function () { return h('a', { key: 'b', className: 'pr-brand display-md', href: props.brandHref || '#' }, ['Preço ', h('span', { key: 'r', className: 'pr-brand__accent' }, 'Real')]); };
+  var brand = function () { return h(Brand, { key: 'b', href: props.brandHref }); };
   if (props.compact) {
     return h('footer', { className: cx('pr-footer', 'pr-footer--compact', props.className) }, [
       h('div', { key: 'm', className: 'pr-footer__main' }, [brand(), h(Text, { key: 't', variant: 'small', tone: 'secondary' }, 'footer.missionShort')]),

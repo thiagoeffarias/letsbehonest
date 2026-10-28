@@ -1,4 +1,6 @@
-# Preço Real
+# Vamos ser honestos (Let's be honest)
+
+Nome público do site (chaves `brand.*` nos catálogos i18n). "Preço Real" é o nome de código interno (pacotes `@preco-real/*`, Design System).
 
 Serviço público gratuito: mapa de preços de imóveis em Portugal (MVP), depois extensão de browser. Plano: ver `docs/plan.md`.
 

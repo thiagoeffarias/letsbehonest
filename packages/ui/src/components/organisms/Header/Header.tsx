@@ -2,6 +2,7 @@ import { h } from '../../../h';
 import type { NavItem } from '../../../types';
 import { cx } from '../../../utils';
 import { useI18n } from '../../../i18n';
+import { Brand } from '../../atoms/Brand';
 import { Button } from '../../atoms/Button';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import type { LanguageSwitcherProps } from '../LanguageSwitcher';
@@ -22,9 +23,7 @@ export function Header(props: HeaderProps) {
   var nav = props.nav || [];
   var menu = props.compact && !props.compactNav;
   return h('header', { className: cx('pr-header', props.compact && 'pr-header--compact', props.className) }, [
-    h('a', { key: 'b', className: 'pr-brand display-md', href: props.brandHref || '#' }, [
-      'Preço ', h('span', { key: 'r', className: 'pr-brand__accent' }, 'Real')
-    ]),
+    h(Brand, { key: 'b', href: props.brandHref }),
     menu
       ? h(Button, { key: 'm', variant: 'ghost', icon: 'menu', iconOnly: true, ariaLabel: 'common.openMenu', href: props.menuHref || '#' })
       : h('div', { key: 'n', className: 'pr-header__right' }, [
