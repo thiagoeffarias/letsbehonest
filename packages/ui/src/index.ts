@@ -11,6 +11,7 @@ export * from './components/atoms/Brand';
 export * from './components/atoms/Label';
 export * from './components/atoms/TextInput';
 export * from './components/atoms/Select';
+export * from './components/atoms/Switch';
 export * from './components/atoms/Checkbox';
 export * from './components/atoms/Divider';
 export * from './components/atoms/Tooltip';

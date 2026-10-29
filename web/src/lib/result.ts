@@ -1,4 +1,4 @@
-import { DEFAULT_PARAMS, REFERENCE_AREA, SIGMA_RANGE, evaluateBuy, evaluateRent, householdIncome } from '@preco-real/model';
+import { DEFAULT_PARAMS, REFERENCE_AREA, RENT_EFFORT_RANGE, SIGMA_RANGE, evaluateBuy, evaluateRent, householdIncome } from '@preco-real/model';
 import type { AgeBucket, Condition, ModelParams, Typology } from '@preco-real/model';
 import type { Meta, Zone } from './data';
 import { periodParts, typologyRecord } from './data';
@@ -99,11 +99,14 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
   const rentPerM2 = input.zone.rentPerM2;
   if (rentPerM2 == null) return null;
   const r = evaluateRent({ asking: input.asking, marketRentPerM2: rentPerM2, income: incomeIn, property }, p);
-  const one = householdIncome(incomeIn, p, 1);
-  const accessible = (p.effort * one) / REFERENCE_AREA[input.typology];
-  const rho = Math.min(rentPerM2, accessible);
+  const household = householdIncome(incomeIn, p);
+  const { accessible, used: rho } = r.perM2;
   const pctAbs = Math.abs(r.excess) * 100;
-  const coef = r.reference / (input.area * rho);
+  const c = r.coefficients;
+  const coef = c.condition * c.age * c.light * c.size;
+  // faixa de esforço: a referência a 30% e a 50%; o excesso vai do maior (30%) ao menor (50%)
+  const exLow = input.asking / r.referenceByEffort.low - 1;
+  const exHigh = input.asking / r.referenceByEffort.high - 1;
   const above = Math.max(0, input.asking - (1 + p.tolerance) * r.reference) / input.asking;
   return {
     verdict: r.verdict,
@@ -113,17 +116,27 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
       { label: 'res.referenceRent', value: num(round(r.reference), 'eurMonth') },
       { label: 'res.excess', value: num(round(r.excess * 100), 'pct', { sign: true }), tone: r.excess > p.tolerance ? 'above' : undefined },
       { label: 'res.requiredIncome', value: num(round(r.requiredIncome), 'eurMonth') },
+      ...(r.referenceByEffort.high - r.referenceByEffort.low < 1 ? [] : [
+      {
+          label: { k: 'res.rentRange', p: { lo: num(RENT_EFFORT_RANGE[0] * 100, 'pct'), hi: num(RENT_EFFORT_RANGE[1] * 100, 'pct') } },
+          value: { k: 'res.range', p: { a: num(round(r.referenceByEffort.low), 'eurMonth'), b: num(round(r.referenceByEffort.high), 'eurMonth') } },
+        },
+        {
+          label: 'res.rentExcessRange',
+          value: { k: 'res.range', p: { a: num(round(exLow * 100), 'pct', { sign: true }), b: num(round(exHigh * 100), 'pct', { sign: true }) } },
+        },
+      ]),
     ],
     position: Math.max(2, Math.min(98, 50 + 50 * Math.log2(input.asking / input.area / rentPerM2))),
     efforts: [{
-      label: { k: 'eff.rentMedian', p: { zone: zoneName } }, value: (input.asking / one) * 100,
+      label: { k: 'eff.rentMedian', p: { zone: zoneName } }, sublabel: user.profile === 'couple' ? 'params.couple' : 'params.single', value: (input.asking / household) * 100,
       caption: { k: 'eff.perMonth', p: { v: num(round(input.asking), 'eurMonth') } }, reference: user.effort, cap: p.effortCap * 100,
     }],
     breakdown: [
       { label: 'rbr.median', note: { k: 'br.median.n2', p: { period: String(meta.rentYear) } }, value: num(rentPerM2, 'eurM2', { d: 2 }) },
-      { label: 'rbr.afford', note: 'rbr.afford.n', value: num(accessible, 'eurM2', { d: 2 }) },
+      { label: 'rbr.afford', note: { k: 'rbr.afford.n2', p: { effort: num(user.effort, 'pct'), profile: user.profile === 'couple' ? 'params.couple' : 'params.single' } }, value: num(accessible, 'eurM2', { d: 2 }) },
       { label: 'rbr.min', note: { k: 'rbr.min.n2', p: { typ: input.typology, area: num(REFERENCE_AREA[input.typology], 'm2') } }, value: num(rho, 'eurM2', { d: 2 }) },
-      { label: 'rbr.coef', note: 'rbr.coef.n', value: times(coef) },
+      { label: 'rbr.coef', note: { k: 'br.coef.dyn', p: { cond: `cond.${input.condition}`, age: `age.${input.age}`, area: num(input.area, 'm2') } }, value: times(coef) },
       { label: 'rbr.ref', note: { k: 'br.ref.n2', p: { area: num(input.area, 'm2') } }, value: num(round(r.reference), 'eurMonth'), kind: 'result' },
     ],
     margin: r.verdict === 'below' ? 'res.margin.below' : above <= 0 ? 'res.margin.fair' : { k: 'res.margin.rent', p: { pct: num(round(above * 100), 'pct') } },

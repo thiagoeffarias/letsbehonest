@@ -101,10 +101,12 @@ B_z = min( m_z , 0,5·S1 + 0,5·S2 )      faixa: 0,3/0,7 e 0,7/0,3 (também limi
 ### 5.3 Renda de referência
 
 ```
-R_ref = A × min( ρ_mercado,z ,  ρ_acess,z ) × C_c × C_luz × s(A)
-ρ_acess,z = 0,30 × Y_hh,z(1 pessoa) / A_tipo
+R_ref = A × min( ρ_mercado,z ,  ρ_acess,z ) × C_c × C_v × C_luz × s(A)
+ρ_acess,z = e × Y_hh,z(perfil) / A_tipo      perfil = casal (por defeito) ou uma pessoa; e = 30%
 Comparar também com o teto RSAA (Portaria 454/2026/1)
 ```
+**Faixa de esforço (v0.2.2).** O resultado mostra a renda de referência com esforço de 30% (referência) e de 50% (o que muitos agregados já pagam), e o excesso em cada extremo. Ao contrário da v0.2, a renda usa o perfil do agregado (casal por defeito, interruptor no formulário) e a vetustez do edifício: com o rendimento de uma só pessoa um T3 ficava com uma referência irrealista (T3 de 90 m² em Matosinhos: 249 €/mês contra 563 € com o casal). O limite de 50% não é um teto legal: é o limiar a partir do qual a renda deixa de ser comportável para a maioria.
+
 `ρ_mercado,z`: renda mediana INE (10,17 €/m² a nível nacional no 2.º trim. 2026).
 
 ### 5.4 Resultado

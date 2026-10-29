@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { annuity, basePrice, evaluateBuy, evaluateRent, householdIncome, verdictFor } from '../src';
+import { DEFAULT_PARAMS, annuity, basePrice, evaluateBuy, evaluateRent, householdIncome, verdictFor } from '../src';
 
 // Exemplo da secção 6 de docs/modelo-preco-referencia.md: T2 de 80 m², bom estado, 9–15 anos,
 // rendimentos de 2023 atualizados ×1,174, casal, e=30%, r=3%, 30 anos, LTV 90%, σ=0,30.
@@ -89,6 +89,34 @@ describe('veredictos', () => {
   it('margem acima da faixa defensável', () => {
     const r = evaluateBuy({ asking: 5192 * 80, ...lisboa, property: t2 });
     expect(r.marginAboveBand).toBeCloseTo((5192 * 80 - 1.1 * r.reference) / (5192 * 80), 6);
+  });
+});
+
+describe('arrendar: perfil, idade e faixa de esforço', () => {
+  const prop = { area: 90, typology: 'T3' as const, condition: 'good' as const, age: '9_15' as const };
+  const rent = (extra: object = {}, p = DEFAULT_PARAMS) =>
+    evaluateRent({ asking: 700, marketRentPerM2: 11.11, income: { medianGross: 12000, update: 1.113 }, property: { ...prop, ...extra } }, p);
+
+  it('o casal tem referência maior do que uma pessoa (um T3 não é pago por um só salário)', () => {
+    const couple = rent({}, { ...DEFAULT_PARAMS, earners: 2 }).reference;
+    const single = rent({}, { ...DEFAULT_PARAMS, earners: 1 }).reference;
+    expect(couple).toBeGreaterThan(single * 1.9);
+  });
+  it('a idade do edifício afeta a renda de referência', () => {
+    const novo = rent({ age: '0_2' }).reference;
+    const velho = rent({ age: '60plus' }).reference;
+    expect(novo).toBeGreaterThan(velho);
+    expect(rent({ age: '9_15' }).coefficients.age).toBeCloseTo(1, 6);
+  });
+  it('a faixa de esforço 30%–50% é crescente e a 30% coincide com a referência', () => {
+    const r = rent();
+    expect(r.referenceByEffort.low).toBeCloseTo(r.reference, 6);
+    expect(r.referenceByEffort.high).toBeGreaterThan(r.referenceByEffort.low);
+  });
+  it('caso Matosinhos: T3 90 m² a 700 € deixa de ser 181% acima com o perfil de casal', () => {
+    const r = rent({}, DEFAULT_PARAMS);
+    expect(r.reference).toBeGreaterThan(400);
+    expect(700 / r.referenceByEffort.high - 1).toBeLessThan(r.excess);
   });
 });
 

@@ -3,7 +3,7 @@ import { act, createElement as h } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { Checkbox, Footer, Header, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
+import { Checkbox, EffortMeter, Footer, Switch, Header, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -41,6 +41,17 @@ describe('onChange recebe o valor, não o evento', () => {
   });
 });
 
+describe('Switch', () => {
+  it('alterna e comunica o estado (role=switch, aria-checked)', () => {
+    const got: boolean[] = [];
+    const host = mount(h(Switch, { checked: false, onChange: (v: boolean) => got.push(v) }, 'calc.profile'));
+    const btn = host.querySelector('button[role="switch"]') as HTMLButtonElement;
+    expect(btn.getAttribute('aria-checked')).toBe('false');
+    act(() => { btn.click(); });
+    expect(got).toEqual([true]);
+  });
+});
+
 describe('selo "de exemplo" opcional', () => {
   const html = (el: any) => renderToStaticMarkup(h(I18nProvider, {}, el));
   it('ZonePanel: por defeito mostra o selo; badge=false esconde-o', () => {
@@ -72,5 +83,18 @@ describe('nome do site', () => {
     expect(html('en')).toContain('Let&#x27;s be');
     expect(html('en')).toContain('honest');
     expect(html('pt_pt')).not.toContain('Preço');
+  });
+});
+
+describe('EffortMeter', () => {
+  const html = renderToStaticMarkup(h(I18nProvider, {}, h(EffortMeter, { value: 40, reference: 30, cap: 45, label: 'eff.couple', sublabel: 'params.couple' })));
+  it('cada legenda fica ancorada ao seu traço (a da referência termina nele, a do teto começa nele)', () => {
+    expect(html).toContain('right:70%');
+    expect(html).toContain('left:45%');
+  });
+  it('o perfil vai numa linha secundária e não entre parênteses no título', () => {
+    expect(html).toContain('pr-effort__title');
+    expect(html).toContain(MESSAGES.pt_pt['params.couple']);
+    expect(html).not.toContain('(' + MESSAGES.pt_pt['params.couple']);
   });
 });
