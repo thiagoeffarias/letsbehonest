@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { h } from '../../../h';
 import type { ReactNode } from 'react';
-import type { Metric } from '../../../types';
+import type { Metric, Option } from '../../../types';
 import { cx } from '../../../utils';
 import { useI18n } from '../../../i18n';
 import { Text } from '../../atoms/Text';
@@ -21,6 +21,8 @@ export interface MapCanvasProps {
   /** Superfície interativa (mapa real) no lugar do cartograma esquemático. */
   surface?: ReactNode;
   onMetricChange?: (metric: Metric) => void;
+  /** Métricas das camadas (por defeito preço, variação e excesso). */
+  metricOptions?: Option[];
   /** Estado da superfície: `loading` e `error` mostram uma mensagem sobre o mapa. */
   status?: 'ready' | 'loading' | 'error';
   /** Mostra os botões de zoom; os callbacks ligam-nos ao mapa. */
@@ -69,7 +71,7 @@ export function MapCanvas(props: MapCanvasProps) {
     }
   });
   return h('div', { className: cx('pr-map', props.size === 'sm' && 'pr-map--sm', props.app && 'pr-map--app', props.panned && 'pr-map--panned', props.className) }, [
-    props.layers ? h('div', { key: 'ly', className: 'pr-map__layers' }, h(MetricTabs, { value: metric, scroll: true, size: 'sm', label: 'metric.layer', onChange: props.onMetricChange as any })) : null,
+    props.layers ? h('div', { key: 'ly', className: 'pr-map__layers' }, h(MetricTabs, { value: metric, scroll: true, size: 'sm', label: 'metric.layer', options: props.metricOptions, onChange: props.onMetricChange as any })) : null,
     props.surface ? h('div', { key: 'sf', className: 'pr-map__surface' }, props.surface) : h('div', { key: 'g', className: 'pr-map__grid', role: 'img', 'aria-label': t('map.aria', { metric: t('map.aria.' + metric) }) }, cells),
     props.controls ? h(MapControls, { key: 'mc', className: 'pr-map__controls', onZoomIn: props.onZoomIn, onZoomOut: props.onZoomOut }) : null,
     props.status === 'loading' || props.status === 'error'

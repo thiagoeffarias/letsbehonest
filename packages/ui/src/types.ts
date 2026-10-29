@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 export type Locale = 'pt_pt' | 'en';
 
-export type NumberFormatKey = 'eur' | 'eurM2' | 'eurMonth' | 'pct' | 'm2';
+export type NumberFormatKey = 'eur' | 'eurM2' | 'eurM2Month' | 'eurMonth' | 'pct' | 'm2';
 
 /** Número formatado segundo o idioma; `f` escolhe o modelo `fmt.*`. */
 export interface NumFormat {
