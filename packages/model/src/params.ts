@@ -49,6 +49,9 @@ export const DEFAULT_PARAMS: ModelParams = {
 /** Intervalo de sensibilidade de σ publicado ao lado do resultado (estimativas institucionais: FMI ≈ 20%, CE ≈ 25–35%). */
 export const SIGMA_RANGE: [number, number] = [0.2, 0.35];
 
+/** Esforço da renda mostrado como faixa realista: 30% (referência) a 50% (limite do que muitos agregados já pagam). */
+export const RENT_EFFORT_RANGE: [number, number] = [0.3, 0.5];
+
 /** Área de referência por tipologia (m²), hipótese do projeto. */
 export const REFERENCE_AREA: Record<Typology, number> = { T0: 35, T1: 50, T2: 80, T3: 105, 'T4+': 135 };
 

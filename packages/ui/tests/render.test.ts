@@ -22,6 +22,7 @@ const cases: Record<string, any> = {
   Select: { options: opts },
   Checkbox: { children: 'calc.light' },
   Divider: {},
+  Switch: { checked: true, children: 'calc.profile' },
   Tooltip: { content: 'common.edit', open: true, children: 'x' },
   FormField: { label: 'calc.zone', hint: 'calc.area.hint', error: 'calc.error.zone', children: 'x' },
   SearchField: {},

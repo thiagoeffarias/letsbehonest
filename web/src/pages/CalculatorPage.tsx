@@ -107,6 +107,7 @@ export function CalculatorPage({ route, compact }: { route: Route; compact: bool
   const formEl = (
     <CalculatorForm
       mode={form.mode} zone={form.zoneText} area={form.area} price={form.price} typology={form.typology} condition={form.condition} age={form.age} light={form.light}
+      profile={user.profile} onProfileChange={(v) => setUser((u) => ({ ...u, profile: v }))}
       errors={errors} zoneSuggestions={form.zoneText.length >= 2 && !form.zoneCode ? hits.map((h) => h.suggestion) : undefined}
       onZoneSelect={(i) => hits[i] && setForm((f) => ({ ...f, zoneText: hits[i].zone.name, zoneCode: hits[i].zone.code }))}
       onFieldChange={onField} onModeChange={(m) => { setForm((f) => ({ ...f, mode: m })); setSubmitted(null); }} onSubmit={submit}

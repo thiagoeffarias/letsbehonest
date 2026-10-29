@@ -1,5 +1,5 @@
 import {
-  CONDITION_COEF, DEFAULT_PARAMS, NO_LIGHT_COEF, QUALITY_BOUNDS, REFERENCE_AREA, RUIN_FLOOR, RUIN_MARKUP,
+  CONDITION_COEF, DEFAULT_PARAMS, NO_LIGHT_COEF, QUALITY_BOUNDS, REFERENCE_AREA, RENT_EFFORT_RANGE, RUIN_FLOOR, RUIN_MARKUP,
   SIZE_BOUNDS, SIZE_EXPONENT, VETUSTEZ_BASE, VETUSTEZ_BY_BUCKET,
 } from './params';
 import type { AgeBucket, Condition, ModelParams, Typology } from './params';
@@ -162,8 +162,13 @@ export interface RentResult {
   asking: number;
   excess: number;
   verdict: Verdict;
-  /** Rendimento líquido mensal necessário para pagar a renda a 30%. */
+  /** Rendimento líquido mensal necessário para pagar a renda ao esforço de referência. */
   requiredIncome: number;
+  /** Renda de referência com esforço de 30% e de 50% (faixa realista). */
+  referenceByEffort: { low: number; high: number };
+  /** Renda €/m² usada (menor entre mercado e acessível) e a acessível ao esforço de referência. */
+  perM2: { market: number; accessible: number; used: number };
+  coefficients: Coefficients;
   /** Múltiplos do salário mínimo líquido, se fornecido. */
   minWageMultiple?: number;
   /** Comparação com o teto do Arrendamento Acessível, se fornecido. */
@@ -183,15 +188,21 @@ export function evaluateRent(
   p: ModelParams = DEFAULT_PARAMS,
 ): RentResult {
   const prop = input.property;
-  const yOne = householdIncome(input.income, p, 1);
-  const accessible = (p.effort * yOne) / REFERENCE_AREA[prop.typology];
+  // perfil do agregado (por defeito casal), como na compra: um T3 não é pago por um só salário
+  const y = householdIncome(input.income, p);
+  const accessibleAt = (effort: number) => (effort * y) / REFERENCE_AREA[prop.typology];
+  const accessible = accessibleAt(p.effort);
   const rho = Math.min(input.marketRentPerM2, accessible);
   const c = coefficients(prop, rho, p);
-  const reference = prop.area * rho * c.condition * c.light * c.size;
+  const factor = prop.area * c.condition * c.age * c.light * c.size;
+  const refAt = (effort: number) => Math.min(input.marketRentPerM2, accessibleAt(effort)) * factor;
+  const reference = rho * factor;
   const excess = input.asking / reference - 1;
   const requiredIncome = input.asking / p.effort;
   return {
-    reference, asking: input.asking, excess, verdict: verdictFor(excess, p), requiredIncome,
+    reference, asking: input.asking, excess, verdict: verdictFor(excess, p), requiredIncome, coefficients: c,
+    referenceByEffort: { low: refAt(RENT_EFFORT_RANGE[0]), high: refAt(RENT_EFFORT_RANGE[1]) },
+    perM2: { market: input.marketRentPerM2, accessible, used: rho },
     minWageMultiple: input.netMinWage ? requiredIncome / input.netMinWage : undefined,
     overCeiling: input.ceiling ? input.asking / input.ceiling - 1 : undefined,
   };

@@ -3,7 +3,7 @@ import { act, createElement as h } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { Checkbox, Footer, Header, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
+import { Checkbox, Footer, Switch, Header, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -37,6 +37,17 @@ describe('onChange recebe o valor, não o evento', () => {
     const got: unknown[] = [];
     const host = mount(h(Checkbox, { checked: false, onChange: (c: boolean) => got.push(c) }, 'x'));
     act(() => { host.querySelector('input')!.click(); });
+    expect(got).toEqual([true]);
+  });
+});
+
+describe('Switch', () => {
+  it('alterna e comunica o estado (role=switch, aria-checked)', () => {
+    const got: boolean[] = [];
+    const host = mount(h(Switch, { checked: false, onChange: (v: boolean) => got.push(v) }, 'calc.profile'));
+    const btn = host.querySelector('button[role="switch"]') as HTMLButtonElement;
+    expect(btn.getAttribute('aria-checked')).toBe('false');
+    act(() => { btn.click(); });
     expect(got).toEqual([true]);
   });
 });
