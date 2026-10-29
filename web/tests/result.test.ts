@@ -39,8 +39,20 @@ describe.skipIf(!has)('resultado da calculadora (dados reais gerados)', () => {
   });
   it('renda: devolve resultado com rendimento necessário', () => {
     const r = buildResult({ ...base, mode: 'rent', typology: 'T0', area: 35, zone: by('Lisboa'), asking: 800 }, meta, DEFAULT_USER_PARAMS, null)!;
-    expect(r.rows[3].value.num).toBeCloseTo(800 / 0.3, 0);
+    const required = r.rows.find((x: any) => x.label === 'res.requiredIncome');
+    expect(required.value.num).toBeCloseTo(800 / 0.3, 0);
     expect(r.efforts).toHaveLength(1);
+  });
+  it('renda: terceira linha com o piso do senhorio, antes do excesso, e imposto editável', () => {
+    const at = (tax: number) => buildResult({ ...base, mode: 'rent', typology: 'T3', area: 90, zone: by('Matosinhos'), asking: 700 }, meta, { ...DEFAULT_USER_PARAMS, tax }, null)!;
+    const r = at(25);
+    expect(r.rows[2].label).toBe('res.landlordFloor');
+    expect(r.rows[2].value.num).toBeGreaterThan(0);
+    expect(at(28).rows[2].value.num).toBeGreaterThan(r.rows[2].value.num);
+    expect(r.breakdown.map((b: any) => b.label)).toContain('rbr.floor.final');
+    // o piso é informação: não altera o veredicto nem a renda de referência
+    expect(at(0).rows[1].value.num).toBe(r.rows[1].value.num);
+    expect(at(0).verdict).toBe(r.verdict);
   });
   it('zona sem mediana (suprimida): sem resultado inventado', () => {
     const corvo = zones.find((z) => z.typologies[0].gap === 'suppressed')!;

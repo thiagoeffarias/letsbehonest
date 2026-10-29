@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_PARAMS, annuity, basePrice, evaluateBuy, evaluateRent, householdIncome, verdictFor } from '../src';
+import { DEFAULT_PARAMS, landlordFloor, annuity, basePrice, evaluateBuy, evaluateRent, householdIncome, verdictFor } from '../src';
 
 // Exemplo da secção 6 de docs/modelo-preco-referencia.md: T2 de 80 m², bom estado, 9–15 anos,
 // rendimentos de 2023 atualizados ×1,174, casal, e=30%, r=3%, 30 anos, LTV 90%, σ=0,30.
@@ -117,6 +117,26 @@ describe('arrendar: perfil, idade e faixa de esforço', () => {
     const r = rent({}, DEFAULT_PARAMS);
     expect(r.reference).toBeGreaterThan(400);
     expect(700 / r.referenceByEffort.high - 1).toBeLessThan(r.excess);
+  });
+});
+
+describe('piso do senhorio (crédito + imposto)', () => {
+  it('prestação do crédito ÷ (1 − imposto)', () => {
+    const f = landlordFloor(3000, 100); // imóvel de 300 000 €
+    expect(f.propertyValue).toBe(300000);
+    expect(f.payment).toBeCloseTo(300000 * 0.9 * annuity(0.03, 30), 6);
+    expect(f.floor).toBeCloseTo(f.payment / 0.75, 6);
+    expect(f.tax).toBe(0.25);
+  });
+  it('imposto mais alto sobe o piso; sem imposto o piso é a prestação', () => {
+    expect(landlordFloor(3000, 100, { ...DEFAULT_PARAMS, rentTax: 0.28 }).floor).toBeGreaterThan(landlordFloor(3000, 100).floor);
+    const f0 = landlordFloor(3000, 100, { ...DEFAULT_PARAMS, rentTax: 0 });
+    expect(f0.floor).toBeCloseTo(f0.payment, 6);
+  });
+  it('evaluateRent só devolve o piso quando conhece a mediana de venda', () => {
+    const base = { asking: 700, marketRentPerM2: 11.11, income: { medianGross: 12000, update: 1.113 }, property: { area: 90, typology: 'T3' as const, condition: 'good' as const, age: '9_15' as const } };
+    expect(evaluateRent(base).landlord).toBeUndefined();
+    expect(evaluateRent({ ...base, salesMedianPerM2: 3000 }).landlord!.floor).toBeGreaterThan(0);
   });
 });
 

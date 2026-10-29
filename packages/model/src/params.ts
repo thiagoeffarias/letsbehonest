@@ -29,6 +29,8 @@ export interface ModelParams {
   capex: number;
   /** Tolerância sobre a referência: 10%. */
   tolerance: number;
+  /** Imposto sobre as rendas recebidas pelo senhorio (taxa autónoma: 25%). */
+  rentTax: number;
 }
 
 export const DEFAULT_PARAMS: ModelParams = {
@@ -44,6 +46,7 @@ export const DEFAULT_PARAMS: ModelParams = {
   netFactor: 0.89,
   capex: 1000,
   tolerance: 0.1,
+  rentTax: 0.25,
 };
 
 /** Intervalo de sensibilidade de σ publicado ao lado do resultado (estimativas institucionais: FMI ≈ 20%, CE ≈ 25–35%). */

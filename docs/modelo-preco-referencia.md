@@ -107,6 +107,8 @@ Comparar também com o teto RSAA (Portaria 454/2026/1)
 ```
 **Faixa de esforço (v0.2.2).** O resultado mostra a renda de referência com esforço de 30% (referência) e de 50% (o que muitos agregados já pagam), e o excesso em cada extremo. Ao contrário da v0.2, a renda usa o perfil do agregado (casal por defeito, interruptor no formulário) e a vetustez do edifício: com o rendimento de uma só pessoa um T3 ficava com uma referência irrealista (T3 de 90 m² em Matosinhos: 249 €/mês contra 563 € com o casal). O limite de 50% não é um teto legal: é o limiar a partir do qual a renda deixa de ser comportável para a maioria.
 
+**Piso do senhorio (v0.2.3).** Informação de contexto, fora do veredicto: a renda mínima para cobrir o crédito do imóvel e o imposto, `piso = prestação ÷ (1 − imposto)`, com a prestação calculada sobre `mediana de venda × área` (financiamento 90%, juro e prazo da compra) e imposto de 25% (taxa autónoma sobre rendas; editável). Assume compra a preço de mercado de hoje, por isso é um teto superior do piso para casas compradas há mais tempo; não inclui IMI, condomínio, seguro nem manutenção.
+
 `ρ_mercado,z`: renda mediana INE (10,17 €/m² a nível nacional no 2.º trim. 2026).
 
 ### 5.4 Resultado

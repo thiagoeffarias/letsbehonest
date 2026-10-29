@@ -3,12 +3,12 @@ import type { AgeBucket, Condition, ModelParams, Typology } from '@preco-real/mo
 import type { Meta, Zone } from './data';
 import { periodParts, typologyRecord } from './data';
 
-export interface UserParams { effort: number; rate: number; sigma: number; term: number; profile: 'single' | 'couple' }
-export const DEFAULT_USER_PARAMS: UserParams = { effort: 30, rate: 3, sigma: 30, term: 30, profile: 'couple' };
+export interface UserParams { effort: number; rate: number; sigma: number; term: number; profile: 'single' | 'couple'; tax: number }
+export const DEFAULT_USER_PARAMS: UserParams = { effort: 30, rate: 3, sigma: 30, term: 30, profile: 'couple', tax: 25 };
 
 export const toModelParams = (u: UserParams): ModelParams => ({
   ...DEFAULT_PARAMS,
-  effort: u.effort / 100, rate: u.rate / 100, sigma: u.sigma / 100, termYears: u.term, earners: u.profile === 'couple' ? 2 : 1,
+  effort: u.effort / 100, rentTax: u.tax / 100, rate: u.rate / 100, sigma: u.sigma / 100, termYears: u.term, earners: u.profile === 'couple' ? 2 : 1,
 });
 
 export interface CalcInput {
@@ -98,7 +98,7 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
   // renda
   const rentPerM2 = input.zone.rentPerM2;
   if (rentPerM2 == null) return null;
-  const r = evaluateRent({ asking: input.asking, marketRentPerM2: rentPerM2, income: incomeIn, property }, p);
+  const r = evaluateRent({ asking: input.asking, marketRentPerM2: rentPerM2, salesMedianPerM2: rec.median ?? undefined, income: incomeIn, property }, p);
   const household = householdIncome(incomeIn, p);
   const { accessible, used: rho } = r.perM2;
   const pctAbs = Math.abs(r.excess) * 100;
@@ -114,6 +114,7 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
     rows: [
       { label: 'res.askingRent', value: num(round(input.asking), 'eurMonth') },
       { label: 'res.referenceRent', value: num(round(r.reference), 'eurMonth') },
+      ...(r.landlord ? [{ label: 'res.landlordFloor', value: num(round(r.landlord.floor), 'eurMonth') }] : []),
       { label: 'res.excess', value: num(round(r.excess * 100), 'pct', { sign: true }), tone: r.excess > p.tolerance ? 'above' : undefined },
       { label: 'res.requiredIncome', value: num(round(r.requiredIncome), 'eurMonth') },
       ...(r.referenceByEffort.high - r.referenceByEffort.low < 1 ? [] : [
@@ -138,6 +139,11 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
       { label: 'rbr.min', note: { k: 'rbr.min.n2', p: { typ: input.typology, area: num(REFERENCE_AREA[input.typology], 'm2') } }, value: num(rho, 'eurM2', { d: 2 }) },
       { label: 'rbr.coef', note: { k: 'br.coef.dyn', p: { cond: `cond.${input.condition}`, age: `age.${input.age}`, area: num(input.area, 'm2') } }, value: times(coef) },
       { label: 'rbr.ref', note: { k: 'br.ref.n2', p: { area: num(input.area, 'm2') } }, value: num(round(r.reference), 'eurMonth'), kind: 'result' },
+      ...(r.landlord ? [
+        { label: 'rbr.floor.value', note: { k: 'rbr.floor.value.n', p: { median: num(Math.round(rec.median ?? 0), 'eurM2'), area: num(input.area, 'm2') } }, value: num(round(r.landlord.propertyValue), 'eur') },
+        { label: 'rbr.floor.payment', note: { k: 'rbr.floor.payment.n', p: { ltv: num(p.ltv * 100, 'pct'), rate: num(user.rate, 'pct', { d: 1 }), years: user.term } }, value: num(round(r.landlord.payment), 'eurMonth') },
+        { label: 'rbr.floor.final', note: { k: 'rbr.floor.final.n', p: { tax: num(user.tax, 'pct') } }, value: num(round(r.landlord.floor), 'eurMonth') },
+      ] : []),
     ],
     margin: r.verdict === 'below' ? 'res.margin.below' : above <= 0 ? 'res.margin.fair' : { k: 'res.margin.rent', p: { pct: num(round(above * 100), 'pct') } },
     source: { k: 'src.resultRent', p: { period: String(meta.rentYear) } },
