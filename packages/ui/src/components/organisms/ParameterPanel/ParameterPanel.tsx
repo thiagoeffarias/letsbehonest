@@ -7,14 +7,14 @@ import { Callout } from '../../molecules/Callout';
 import { ChoiceGroup } from '../../molecules/ChoiceGroup';
 import { FormField } from '../../molecules/FormField';
 
-export type ParameterField = 'effort' | 'rate' | 'sigma' | 'term' | 'profile';
+export type ParameterField = 'effort' | 'rate' | 'sigma' | 'term' | 'profile' | 'tax';
 
 export interface ParameterPanelProps {
   id?: string;
   open?: boolean;
   /** Valores atuais (percentagens inteiras ou 1 casa decimal; prazo em anos). Sem `onChange` o painel é só demonstrativo. */
-  values?: { effort: number; rate: number; sigma: number; term: number; profile: 'single' | 'couple' };
-  onChange?: (name: 'effort' | 'rate' | 'sigma' | 'term' | 'profile', value: string) => void;
+  values?: { effort: number; rate: number; sigma: number; term: number; profile: 'single' | 'couple'; tax?: number };
+  onChange?: (name: ParameterField, value: string) => void;
   onReset?: () => void;
   className?: string;
 }
@@ -37,6 +37,8 @@ export function ParameterPanel(props: ParameterPanelProps) {
           h(Select, Object.assign({ id: 'p-rate', options: pct([2, 3, 4, 5], 1) }, ctl('rate', V && V.rate, '3')))),
         h(FormField, { key: 's', id: 'p-sigma', label: 'params.sigma', hint: 'params.sigma.hint' },
           h(Select, Object.assign({ id: 'p-sigma', options: pct([20, 25, 30, 35]) }, ctl('sigma', V && V.sigma, '30')))),
+        h(FormField, { key: 'x', id: 'p-tax', label: 'params.tax', hint: 'params.tax.hint' },
+          h(Select, Object.assign({ id: 'p-tax', options: pct([0, 10, 25, 28]) }, ctl('tax', V && V.tax, '25')))),
         h(FormField, { key: 'n', id: 'p-term', label: 'params.term', hint: 'params.term.hint' },
           h(Select, Object.assign({ id: 'p-term', options: [25, 30, 35, 40].map(function (x) { return { value: String(x), label: { k: 'params.years', p: { n: x } } }; }) }, ctl('term', V && V.term, '30'))))
       ]),

@@ -156,6 +156,24 @@ export function evaluateBuy(
   };
 }
 
+/** Quanto o senhorio teria de cobrar para cobrir o crédito do imóvel e o imposto sobre a renda. */
+export interface LandlordFloor {
+  /** Valor do imóvel assumido (mediana de venda da zona × área). */
+  propertyValue: number;
+  /** Prestação mensal do crédito (financiamento, juro e prazo da compra). */
+  payment: number;
+  /** Renda mínima: prestação ÷ (1 − imposto). Não inclui IMI, condomínio, seguro nem manutenção. */
+  floor: number;
+  tax: number;
+}
+
+/** Piso de equilíbrio do senhorio. Estimativa: assume que o imóvel foi comprado ao preço de mercado de hoje. */
+export function landlordFloor(salesMedianPerM2: number, area: number, p: ModelParams = DEFAULT_PARAMS): LandlordFloor {
+  const propertyValue = salesMedianPerM2 * area;
+  const payment = propertyValue * p.ltv * annuity(p.rate, p.termYears);
+  return { propertyValue, payment, floor: payment / (1 - p.rentTax), tax: p.rentTax };
+}
+
 export interface RentResult {
   /** Renda de referência mensal, €. */
   reference: number;
@@ -169,6 +187,8 @@ export interface RentResult {
   /** Renda €/m² usada (menor entre mercado e acessível) e a acessível ao esforço de referência. */
   perM2: { market: number; accessible: number; used: number };
   coefficients: Coefficients;
+  /** Piso do senhorio, se a mediana de venda da zona for conhecida. */
+  landlord?: LandlordFloor;
   /** Múltiplos do salário mínimo líquido, se fornecido. */
   minWageMultiple?: number;
   /** Comparação com o teto do Arrendamento Acessível, se fornecido. */
@@ -180,6 +200,8 @@ export function evaluateRent(
     asking: number;
     /** Renda mediana de novos contratos da zona, €/m². */
     marketRentPerM2: number;
+    /** Mediana de venda da zona (€/m²), para o piso do senhorio. */
+    salesMedianPerM2?: number;
     income: IncomeInput;
     property: PropertyInput;
     netMinWage?: number;
@@ -203,6 +225,7 @@ export function evaluateRent(
     reference, asking: input.asking, excess, verdict: verdictFor(excess, p), requiredIncome, coefficients: c,
     referenceByEffort: { low: refAt(RENT_EFFORT_RANGE[0]), high: refAt(RENT_EFFORT_RANGE[1]) },
     perM2: { market: input.marketRentPerM2, accessible, used: rho },
+    landlord: input.salesMedianPerM2 ? landlordFloor(input.salesMedianPerM2, prop.area, p) : undefined,
     minWageMultiple: input.netMinWage ? requiredIncome / input.netMinWage : undefined,
     overCeiling: input.ceiling ? input.asking / input.ceiling - 1 : undefined,
   };

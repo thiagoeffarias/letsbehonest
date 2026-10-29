@@ -16,7 +16,7 @@ export function BreakdownList(props: BreakdownListProps) {
         h(Text, { key: 'a', variant: it.kind === 'result' ? 'body-strong' : 'body', as: 'span' }, it.label),
         it.note ? h(Text, { key: 'b', variant: 'caption', tone: 'secondary', as: 'span' }, it.note) : null
       ]),
-      h(Text, { key: 'v', variant: 'figure', as: 'span', tone: it.tone }, it.value)
+      h(Text, { key: 'v', variant: 'figure', as: 'span', tone: it.tone, className: 'pr-breakdown__value' }, it.value)
     ]);
   }));
 }

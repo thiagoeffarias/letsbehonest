@@ -473,3 +473,5 @@
 .pr-toolbar__rent { align-self: center; }
 /* mobile: os controlos de zoom ficam abaixo da legenda compacta */
 .pr-page--app .pr-map__controls { top: calc(var(--space-12) * 3); }
+/* valores do decomposição não quebram; a nota longa é que quebra */
+.pr-breakdown__value { flex: none; white-space: nowrap; }
