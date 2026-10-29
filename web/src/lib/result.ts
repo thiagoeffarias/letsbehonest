@@ -129,7 +129,7 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
     ],
     position: Math.max(2, Math.min(98, 50 + 50 * Math.log2(input.asking / input.area / rentPerM2))),
     efforts: [{
-      label: { k: 'eff.rentMedian', p: { zone: zoneName, profile: user.profile === 'couple' ? 'params.couple' : 'params.single' } }, value: (input.asking / household) * 100,
+      label: { k: 'eff.rentMedian', p: { zone: zoneName } }, sublabel: user.profile === 'couple' ? 'params.couple' : 'params.single', value: (input.asking / household) * 100,
       caption: { k: 'eff.perMonth', p: { v: num(round(input.asking), 'eurMonth') } }, reference: user.effort, cap: p.effortCap * 100,
     }],
     breakdown: [

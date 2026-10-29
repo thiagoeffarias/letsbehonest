@@ -29,10 +29,9 @@ export interface CalculatorFormProps {
   zoneSuggestions?: Suggestion[];
   onZoneSelect?: (index: number) => void;
   onFieldChange?: (name: CalculatorField, value: string | boolean) => void;
-  /** Quem paga: uma pessoa ou casal. Mostra-se no modo renda (ou com `showProfile`). */
+  /** Quem paga: uma pessoa ou casal. Mostra-se na compra e na renda. */
   profile?: 'single' | 'couple';
   onProfileChange?: (profile: 'single' | 'couple') => void;
-  showProfile?: boolean;
   onModeChange?: (mode: 'buy' | 'rent') => void;
   onSubmit?: () => void;
   className?: string;
@@ -61,7 +60,7 @@ export function CalculatorForm(props: CalculatorFormProps) {
       h(FormField, { key: 'p', id: 'calc-price', label: rent ? 'calc.rent' : 'calc.price', hint: rent ? 'calc.rent.hint' : 'calc.price.hint', className: 'pr-calc__wide', error: err.price },
         h(TextInput, Object.assign({ id: 'calc-price', inputMode: 'numeric', placeholder: rent ? 'calc.rent.placeholder' : 'calc.price.placeholder', invalid: !!err.price, onChange: change('price') }, val(props.price))))
     ]),
-    (rent || props.showProfile) ? h(Switch, { key: 'pf', id: 'calc-profile', checked: (props.profile || 'couple') === 'couple', onChange: props.onProfileChange ? function (on: boolean) { props.onProfileChange!(on ? 'couple' : 'single'); } : undefined }, 'calc.profile') : null,
+    h(Switch, { key: 'pf', id: 'calc-profile', checked: (props.profile || 'couple') === 'couple', onChange: props.onProfileChange ? function (on: boolean) { props.onProfileChange!(on ? 'couple' : 'single'); } : undefined }, rent ? 'calc.profile' : 'calc.profile.buy'),
     h('details', { key: 'd', className: 'pr-calc__more', open: !!props.advancedOpen }, [
       h('summary', { key: 's', className: 'body-strong' }, i18nText('calc.more')),
       h('div', { key: 'b', className: 'pr-calc__grid pr-calc__grid--more' }, [
