@@ -469,3 +469,7 @@
 .pr-switch.is-disabled { opacity: .5; cursor: not-allowed; }
 .pr-switch.is-disabled .pr-switch__track { cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) { .pr-switch__track, .pr-switch__thumb { transition: none; } }
+/* interruptor compra/renda na barra do mapa */
+.pr-toolbar__rent { align-self: center; }
+/* mobile: os controlos de zoom ficam abaixo da legenda compacta */
+.pr-page--app .pr-map__controls { top: calc(var(--space-12) * 3); }

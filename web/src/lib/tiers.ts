@@ -1,8 +1,13 @@
 import type { Metric } from '@preco-real/ui';
-import type { TypologyKey, Zone } from './data';
+import type { Meta, TypologyKey, Zone } from './data';
+import { rentZone } from './rent';
 import { typologyRecord } from './data';
 
-export function metricValue(z: Zone, metric: Metric, t: TypologyKey): number | null {
+export function metricValue(z: Zone, metric: Metric, t: TypologyKey, rent?: Meta): number | null {
+  if (rent) {
+    const r = rentZone(z, t, rent);
+    return r == null ? null : metric === 'excess' ? r.excess : r.market; // a renda só tem preço e excesso
+  }
   const r = typologyRecord(z, t);
   return metric === 'price' ? r.median : metric === 'change' ? r.yoy : r.excess;
 }

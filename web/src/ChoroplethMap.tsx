@@ -13,6 +13,8 @@ export interface ChoroplethMapProps {
   data: Dataset;
   metric: Metric;
   typology: TypologyKey;
+  /** Ver rendas (arrendar) em vez de preços de venda. */
+  rent?: boolean;
   selected: string | null;
   onSelect: (code: string) => void;
   /** Extremos da escala (para a legenda). */
@@ -24,6 +26,7 @@ export interface ChoroplethMapProps {
 
 export function ChoroplethMap(props: ChoroplethMapProps) {
   const { data, metric, typology, selected } = props;
+  const rent = !!props.rent;
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const ready = useRef(false);
@@ -34,20 +37,20 @@ export function ChoroplethMap(props: ChoroplethMapProps) {
 
   // atribui o tom de cada polígono para a métrica e tipologia atuais
   const painted = useMemo(() => {
-    const vals = data.concelhos.filter((z) => z.code !== 'PT').map((z) => metricValue(z, metric, typology)).filter((v): v is number => v != null);
+    const vals = data.concelhos.filter((z) => z.code !== 'PT').map((z) => metricValue(z, metric, typology, rent ? data.meta : undefined)).filter((v): v is number => v != null);
     const th = thresholds(vals, metric);
     const tag = (fc: FeatureCollection, byCode: (code: string) => number | null): FeatureCollection => ({
       ...fc,
       features: fc.features.map((f) => ({ ...f, properties: { ...f.properties, tier: tierOf(byCode(f.properties.code), th) } })),
     });
-    const valueOf = (code: string) => { const z = data.byCode.get(code); return z ? metricValue(z, metric, typology) : null; };
+    const valueOf = (code: string) => { const z = data.byCode.get(code); return z ? metricValue(z, metric, typology, rent ? data.meta : undefined) : null; };
     return {
       concelhos: tag(data.concelhosGeo, valueOf),
       freguesias: tag(data.freguesiasGeo, valueOf),
       low: vals.length ? Math.min(...vals) : null,
       high: vals.length ? Math.max(...vals) : null,
     };
-  }, [data, metric, typology]);
+  }, [data, metric, typology, rent]);
 
   latest.current = { painted, metric, selected };
 

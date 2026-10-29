@@ -3,7 +3,7 @@ import { act, createElement as h } from 'react';
 import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { Checkbox, EffortMeter, Footer, Switch, Header, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
+import { Checkbox, EffortMeter, Footer, MapToolbar, Switch, Header, I18nProvider, MESSAGES, Select, TextInput, VerdictCard, ZonePanel } from '../src';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -96,5 +96,22 @@ describe('EffortMeter', () => {
     expect(html).toContain('pr-effort__title');
     expect(html).toContain(MESSAGES.pt_pt['params.couple']);
     expect(html).not.toContain('(' + MESSAGES.pt_pt['params.couple']);
+  });
+});
+
+describe('mapa: interruptor compra/renda', () => {
+  const html = (el: any) => renderToStaticMarkup(h(I18nProvider, {}, el));
+  it('MapToolbar só mostra o interruptor quando recebe `rent`', () => {
+    expect(html(h(MapToolbar, {}))).not.toContain('role="switch"');
+    const on = html(h(MapToolbar, { rent: true }));
+    expect(on).toContain('role="switch"');
+    expect(on).toContain('aria-checked="true"');
+    expect(on).toContain(MESSAGES.pt_pt['map.rentMode']);
+  });
+  it('ZonePanel em modo renda usa os rótulos de renda', () => {
+    const base = { zone: 'Lisboa', value: 1, reference: 1, excess: 'x', badge: false };
+    expect(html(h(ZonePanel, { ...base, mode: 'rent' }))).toContain(MESSAGES.pt_pt['zone.median.rent']);
+    expect(html(h(ZonePanel, base))).toContain(MESSAGES.pt_pt['zone.median']);
+    expect(html(h(ZonePanel, base))).not.toContain(MESSAGES.pt_pt['zone.median.rent']);
   });
 });

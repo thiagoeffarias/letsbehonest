@@ -1,5 +1,6 @@
 import { h } from '../../../h';
-import type { Metric, Suggestion } from '../../../types';
+import type { Metric, Option, Suggestion } from '../../../types';
+import { Switch } from '../../atoms/Switch';
 import { cx } from '../../../utils';
 import { MetricTabs } from '../../molecules/MetricTabs';
 import { SearchField } from '../../molecules/SearchField';
@@ -14,6 +15,11 @@ export interface MapToolbarProps {
   typology?: string;
   metric?: Metric;
   compact?: boolean;
+  /** Mostra o interruptor compra/renda; `true` = a ver rendas. */
+  rent?: boolean;
+  onRentChange?: (rent: boolean) => void;
+  /** Métricas disponíveis (por defeito preço, variação e excesso). */
+  metricOptions?: Option[];
   onQueryChange?: (query: string) => void;
   onSuggestionSelect?: (index: number) => void;
   onTypologyChange?: (typology: string) => void;
@@ -30,6 +36,7 @@ export function MapToolbar(props: MapToolbarProps) {
       searching ? h(SuggestionList, { key: 'l', items: props.suggestions || [], query: props.query, active: props.active == null ? 0 : props.active, onSelect: props.onSuggestionSelect }) : null
     ]),
     h(TypologyFilter, { key: 't', value: props.typology, onChange: props.onTypologyChange, size: props.compact ? 'md' : 'sm', scroll: props.compact }),
-    props.compact ? null : h(MetricTabs, { key: 'm', value: props.metric, onChange: props.onMetricChange as any })
+    props.compact ? null : h(MetricTabs, { key: 'm', value: props.metric, options: props.metricOptions, onChange: props.onMetricChange as any }),
+    props.rent === undefined ? null : h(Switch, { key: 'r', id: 'map-rent', checked: props.rent, onChange: props.onRentChange, className: 'pr-toolbar__rent' }, 'map.rentMode')
   ]);
 }
