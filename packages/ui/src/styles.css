@@ -452,3 +452,5 @@
 .pr-page--app .pr-map__controls { top: calc(var(--space-12) + var(--space-8)); }
 /* sugestões de zona ancoradas ao campo */
 .pr-calc__zone { position: relative; }
+/* selos dentro de colunas de texto não esticam */
+.pr-prose > .pr-badge, .pr-stack > .pr-badge, .pr-section__body > .pr-badge { align-self: flex-start; }

@@ -1,4 +1,4 @@
-import { DEFAULT_PARAMS, REFERENCE_AREA, evaluateBuy, evaluateRent, householdIncome } from '@preco-real/model';
+import { DEFAULT_PARAMS, REFERENCE_AREA, SIGMA_RANGE, evaluateBuy, evaluateRent, householdIncome } from '@preco-real/model';
 import type { AgeBucket, Condition, ModelParams, Typology } from '@preco-real/model';
 import type { Meta, Zone } from './data';
 import { periodParts, typologyRecord } from './data';
@@ -44,6 +44,9 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
     const pctAbs = Math.abs(r.excess) * 100;
     const c = r.coefficients;
     const combined = c.condition * c.age * c.light * c.quality * c.size;
+    // a mesma avaliação com os dois extremos de σ: mostra o quanto o resultado depende desta hipótese
+    const lowSigma = evaluateBuy({ asking: input.asking, median: rec.median, income: incomeIn, property }, { ...p, sigma: SIGMA_RANGE[0] });
+    const highSigma = evaluateBuy({ asking: input.asking, median: rec.median, income: incomeIn, property }, { ...p, sigma: SIGMA_RANGE[1] });
     const share = r.effort.share * 100;
     const efforts = [
       {
@@ -63,6 +66,14 @@ export function buildResult(input: CalcInput, meta: Meta, user: UserParams, nati
         { label: 'res.reference', value: num(round(r.reference), 'eur') },
         { label: 'res.excess', value: num(round(r.excess * 100), 'pct', { sign: true }), tone: r.excess > p.tolerance ? 'above' : undefined },
         { label: 'res.band', value: { k: 'res.upTo', p: { v: num(round((1 + p.tolerance) * r.reference), 'eur') } } },
+        {
+          label: { k: 'res.sigmaRef', p: { lo: num(SIGMA_RANGE[0] * 100, 'pct'), hi: num(SIGMA_RANGE[1] * 100, 'pct') } },
+          value: { k: 'res.range', p: { a: num(round(highSigma.reference), 'eur'), b: num(round(lowSigma.reference), 'eur') } },
+        },
+        {
+          label: 'res.sigmaExcess',
+          value: { k: 'res.range', p: { a: num(round(lowSigma.excess * 100), 'pct', { sign: true }), b: num(round(highSigma.excess * 100), 'pct', { sign: true }) } },
+        },
       ],
       position: Math.max(2, Math.min(98, 50 + 50 * Math.log2(input.asking / input.area / rec.median))),
       efforts,
